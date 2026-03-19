@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Nginx config on server (outside repo)
+/etc/nginx/sites-available/api.zenko.prabalesh.com.conf
+/etc/nginx/sites-enabled/api.zenko.prabalesh.com.conf
