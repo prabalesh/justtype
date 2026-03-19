@@ -1,5 +1,6 @@
+"use client";
 import { useState, useEffect, useRef, useCallback } from 'react';
-import './App.css';
+
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 
