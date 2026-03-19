@@ -13,12 +13,12 @@ const SAMPLE_TEXTS = {
 function generateText(difficulty: Difficulty, includeNumbers: boolean, includeSymbols: boolean): string {
   let baseText = SAMPLE_TEXTS[difficulty];
   let words = baseText.split(' ');
-  
+
   words = [...words].sort(() => Math.random() - 0.5);
-  
+
   words = words.map(word => {
     let modifiedWord = word;
-    
+
     if (Math.random() > 0.7) {
       modifiedWord = modifiedWord.charAt(0).toUpperCase() + modifiedWord.slice(1);
     }
@@ -31,7 +31,7 @@ function generateText(difficulty: Difficulty, includeNumbers: boolean, includeSy
     }
     return modifiedWord;
   });
-  
+
   return words.join(' ');
 }
 
@@ -40,7 +40,7 @@ function App() {
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [includeNumbers, setIncludeNumbers] = useState(false);
   const [includeSymbols, setIncludeSymbols] = useState(false);
-  
+
   const [gameStarted, setGameStarted] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
   const [targetText, setTargetText] = useState('');
@@ -53,7 +53,7 @@ function App() {
   const [isFocused, setIsFocused] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [textVersion, setTextVersion] = useState(0);
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
   const intervalRef = useRef<number | null>(null);
   const wordsDisplayRef = useRef<HTMLDivElement>(null);
@@ -80,15 +80,15 @@ function App() {
     if (wordsDisplayRef.current && gameStarted) {
       const container = wordsDisplayRef.current;
       const activeChar = container.querySelector('.char.current, .current-space');
-      
+
       if (activeChar) {
         const charRect = activeChar.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        
+
         const lineHeight = parseFloat(getComputedStyle(container).lineHeight);
         const relativeTop = charRect.top - containerRect.top + container.scrollTop;
         const currentLine = Math.floor(relativeTop / lineHeight);
-        
+
         if (currentLine > 2) {
           const scrollAmount = (currentLine - 2) * lineHeight;
           container.scrollTop = scrollAmount;
@@ -102,17 +102,17 @@ function App() {
       intervalRef.current = window.setInterval(() => {
         const elapsed = (Date.now() - startTime) / 1000;
         setTimeElapsed(elapsed);
-        
+
         const remaining = Math.max(0, timeLimit - elapsed);
         setTimeRemaining(remaining);
-        
+
         const minutes = elapsed / 60;
-        
+
         if (minutes > 0) {
           const allCharsTyped = userInput.length;
           const calculatedRawWpm = Math.round((allCharsTyped / 5) / minutes);
           setRawWpm(calculatedRawWpm);
-          
+
           let correctChars = 0;
           for (let i = 0; i < userInput.length; i++) {
             if (userInput[i] === targetText[i]) {
@@ -121,18 +121,18 @@ function App() {
           }
           const calculatedWpm = Math.round((correctChars / 5) / minutes);
           setWpm(calculatedWpm);
-          
+
           if (userInput.length > 0) {
             const acc = Math.round((correctChars / userInput.length) * 100);
             setAccuracy(acc);
           }
         }
-        
+
         if (elapsed >= timeLimit) {
           finishGame();
         }
       }, 100);
-      
+
       return () => {
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
@@ -157,17 +157,17 @@ function App() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    
+
     if (gameFinished) {
       return;
     }
-    
+
     if (!gameStarted && !gameFinished && value.length === 1) {
       setGameStarted(true);
       setStartTime(Date.now());
       setTimeRemaining(timeLimit);
     }
-    
+
     if (value.length <= targetText.length) {
       setUserInput(value);
     }
@@ -177,7 +177,7 @@ function App() {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
-    
+
     setGameStarted(false);
     setGameFinished(false);
     setUserInput('');
@@ -187,13 +187,13 @@ function App() {
     setRawWpm(0);
     setAccuracy(100);
     setStartTime(null);
-    
+
     if (wordsDisplayRef.current) {
       wordsDisplayRef.current.scrollTop = 0;
     }
-    
+
     setTextVersion(prev => prev + 1);
-    
+
     setIsFocused(true);
     setTimeout(() => {
       inputRef.current?.focus();
@@ -250,7 +250,7 @@ function App() {
         inputRef.current?.blur();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
@@ -262,7 +262,7 @@ function App() {
     return words.map((word, wordIndex) => {
       const wordStart = charIndex;
       const wordChars = word.split('');
-      
+
       const wordElements = wordChars.map((char, charIndexInWord) => {
         const absoluteIndex = wordStart + charIndexInWord;
         const isTyped = absoluteIndex < userInput.length;
@@ -288,7 +288,7 @@ function App() {
       });
 
       charIndex++;
-      
+
       const spaceIndex = wordStart + word.length;
       const spaceCurrent = userInput.length === spaceIndex;
 
@@ -313,7 +313,7 @@ function App() {
         <div className="typing-section" onClick={handleScreenClick}>
 
           <div className="typing-container">
-            <div className="words-display" style={{textAlign:"center"}} ref={wordsDisplayRef}>
+            <div className="words-display" style={{ textAlign: "center" }} ref={wordsDisplayRef}>
               {renderWords()}
             </div>
           </div>
@@ -346,12 +346,12 @@ function App() {
                   <div className="result-value">{rawWpm}</div>
                 </div>
               </div>
-              <button 
-                className="next-test-btn" 
+              <button
+                className="next-test-btn"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={(e) => { 
-                  e.stopPropagation(); 
-                  resetGame(); 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  resetGame();
                 }}
               >
                 next test
@@ -459,7 +459,7 @@ function App() {
           disabled={gameFinished}
           autoComplete="off"
           autoCorrect="off"
-          autoCapitalize="off"
+          autoCapitalize="none"
           spellCheck="false"
         />
       </div>
@@ -471,15 +471,15 @@ function App() {
           </div>
           <div className="footer-divider">·</div>
           <div className="footer-section">
-            <a 
-              href="https://github.com/prabalesh/justtype" 
-              target="_blank" 
+            <a
+              href="https://github.com/prabalesh/justtype"
+              target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
             >
               github
               <svg className="github-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
               </svg>
               justtype
             </a>

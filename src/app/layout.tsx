@@ -1,9 +1,11 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { HeaderAuth } from "@/components/HeaderAuth";
 
 export const metadata: Metadata = {
-  title: 'JustType',
-  description: 'Multiplayer typing racer',
+  title: "JustType",
+  description: "Multiplayer typing racer",
 };
 
 export default function RootLayout({
@@ -13,7 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SessionProvider>
+          <HeaderAuth />
+          {children}
+        </SessionProvider>
+      </body>
     </html>
   );
 }
