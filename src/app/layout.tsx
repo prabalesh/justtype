@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
-import { HeaderAuth } from "@/components/HeaderAuth";
 
 export const metadata: Metadata = {
   title: "JustType",
@@ -17,7 +16,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <SessionProvider>
-          <HeaderAuth />
           {children}
         </SessionProvider>
       </body>
